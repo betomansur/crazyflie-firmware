@@ -10,7 +10,8 @@ int main()
     // Blink LED every second
     while(true) 
     {
-        led = !led;
-        wait(0.5);
+        led = true;
+        wait(10);
+        led = false;
     }
 }
