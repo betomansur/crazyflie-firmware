@@ -1,37 +1,35 @@
 #include "mbed.h"
 #include "crazyflie.h"
-#include "src/utils/parameters.h"
+#include "parameters.h"
 
-PwmOut motor(MOTOR1);
+PwmOut motor1(MOTOR1);
 PwmOut motor2(MOTOR2);
 PwmOut motor3(MOTOR3);
 PwmOut motor4(MOTOR4);
 
-
-float control_motor(float w)
+// função para converter velocidade angular em duty cycle do PWM
+float control_motor(float omega)
 {
-  float pwm = (a2*w*w) + (a1*w); 
-  return pwm;
+    return a2*omega*omega + a1*omega; // função obtida experimentalmente 
 }
 
 int main()
 {
-    while (true)
-    {
-            // Loop infinito, o código pode ser expandido aqui
-        motor.period(1.0/500.0);
-        motor = control_motor(1600.0);
-        motor2.period(1.0/500.0);
-        motor2 = control_motor(1600.0);
-        motor3.period(1.0/500.0);
-        motor3 = control_motor(1600.0);
-        motor4.period(1.0/500.0);
-        motor4 = control_motor(1600.0);
-        wait(5.0);
-        motor = control_motor(0.0);
-        motor2 = control_motor(0.0);
-        motor3 = control_motor(0.0);
-        motor4 = control_motor(0.0);
-        wait(5.0);
-    }
+    motor1.period(1.0/500.0); // frequencia do motor
+    motor2.period(1.0/500.0); // frequencia do motor
+    motor3.period(1.0/500.0); // frequencia do motor
+    motor4.period(1.0/500.0); // frequencia do motor
+
+    motor1 = control_motor(1000.0);
+    motor2 = control_motor(2000.0);
+    motor3 = control_motor(1000.0);
+    motor4 = control_motor(2000.0);
+
+    //motor = 0.1;
+    wait(10);
+
+    motor1 = 0.0;
+    motor2 = 0.0;
+    motor3 = 0.0;
+    motor4 = 0.0;
 }
