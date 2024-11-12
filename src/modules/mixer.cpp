@@ -1,7 +1,11 @@
 #include "crazyflie.h"
 #include "mixer.h"
+
 // Class constructor
-Mixer::Mixer() : motor_1(MOTOR1), motor_2(MOTOR2), motor_3(MOTOR3), motor_4(MOTOR4)
+Mixer::Mixer() 
+    : motor_1(MOTOR1), motor_2(MOTOR2), motor_3(MOTOR3), motor_4(MOTOR4),
+      led_verdeL(LED_GREEN_L), led_verdeR(LED_GREEN_R), 
+      led_vermL(LED_RED_L), led_vermR(LED_RED_R), armed(false)
 {
     motor_1.period(1.0/500.0); // Set PWM frequency to 500 Hz
     motor_2.period(1.0/500.0);
@@ -11,6 +15,22 @@ Mixer::Mixer() : motor_1(MOTOR1), motor_2(MOTOR2), motor_3(MOTOR3), motor_4(MOTO
     motor_2 = 0.0;
     motor_3 = 0.0;
     motor_4 = 0.0;
+}
+
+// Arm function: Enables the motors and indicates armed state with LEDs
+void Mixer::arm()
+{
+    armed = true;
+    led_vermL = 1; // Turn on red LEDs
+    led_vermR = 1;
+}
+
+// Disarm function: Disables the motors and indicates disarmed state with LEDs
+void Mixer::disarm()
+{
+    armed = false;
+    led_vermL = 0; // Turn off red LEDs
+    led_vermR = 0;
 }
 
 // Actuate motors with desired total thrust force (N) and torques (N.m)
