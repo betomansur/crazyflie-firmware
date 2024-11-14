@@ -25,16 +25,14 @@ void Mixer::arm()
     led_vermR = 1;
 }
 
-// Disarm function: Disables the motors and indicates disarmed state with LEDs
 void Mixer::disarm()
 {
     actuate(0, 0, 0, 0);
     armed = false;
-    led_vermL = 0; // Turn off red LEDs
+    led_vermL = 0;
     led_vermR = 0;
 }
 
-// Actuate motors with desired total thrust force (N) and torques (N.m)
 void Mixer::actuate(float f_t, float tau_phi, float tau_theta, float tau_psi)
 {
     if (armed) {
@@ -46,10 +44,8 @@ void Mixer::actuate(float f_t, float tau_phi, float tau_theta, float tau_psi)
     } 
 }
 
-// Convert total thrust force (N) and torques (N.m) to angular velocities (rad/s)
 void Mixer::mixer(float f_t, float tau_phi, float tau_theta, float tau_psi)
 {
-    // Compute angular velocities squared for each motor
     float omega_1_squared = (f_t/(4 * kl)) - (tau_phi/(2 * kl * l)) - (tau_theta/(4 * kl * l)) - (tau_psi/(4 * kd));
     float omega_2_squared = (f_t/(4 * kl)) - (tau_phi/(2 * kl * l)) + (tau_theta/(4 * kl * l)) + (tau_psi/(4 * kd));
     float omega_3_squared = (f_t/(4 * kl)) + (tau_phi/(2 * kl * l)) + (tau_theta/(4 * kl * l)) - (tau_psi/(4 * kd));
