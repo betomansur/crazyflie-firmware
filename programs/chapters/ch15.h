@@ -11,39 +11,36 @@ char command;
 // Define attitude estimator object
 AttitudeEstimator att_est;
 
-// Define Ticker objects
+// Define Ticker object
 Ticker tic;
 
-// Define Interrupt flag and counter variables
+// Define interrupt flag and counter variables
 bool flag;
-
-// Define Callback functions
-void callback() {
-    flag = true;
-}
+void callback() { flag = true; }
 
 // Main program
-int main() {
+int main()
+{
     // Initialize attitude estimator objects
     att_est.init();
-    
     // Initialize interrupt
-    tic.attach(&callback, dt); // dt deve ser definido no arquivo parameters.h
-
-    while (true) {
+    tic.attach(callback, dt);
+    while (true)
+    {
         // Estimate attitude
-        if (flag) {
+        if (flag)
+        {
             flag = false;
             att_est.estimate();
         }
-
         // Print attitude
-        if (serial.readable()) {
-            command = serial.getc(); // Lê comando da porta serial
-            // Adicione código para processar o comando
+        if (serial.readable())
+        {
+            command = serial.getc();
+            if (command == 'p')
+            {
+                serial.printf("%f,%f,%f\n", att_est.phi, att_est.theta, att_est.psi);
+            }
         }
-
-        // Opcional: Adicione código para imprimir os ângulos estimados
-        serial.printf("Attitude: phi = %f, theta = %f, psi = %f\n", att_est.phi, att_est.theta, att_est.psi);
     }
 }

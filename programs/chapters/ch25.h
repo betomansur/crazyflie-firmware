@@ -23,15 +23,11 @@ void callback_range() { flag_range = true; }
 // Main program
 int main()
 {
-    // Set initial references
-    float z_r = 0.0;  // Initial reference
+    // Set references
+    float z_r = 1.0;
     float x_r = 0.0;
     float y_r = 0.0;
     float psi_r = 0.0;
-
-    // State variables for trajectory
-    enum State { TAKEOFF, HOVER, LAND } state = TAKEOFF;
-    Timer timer;
 
     // Initialize estimators objects
     att_est.init();
@@ -44,8 +40,6 @@ int main()
 
     // Arm motors and run controller while stable
     mixer.arm();
-    timer.start();
-
     while (abs(att_est.phi) <= pi / 4.0 && abs(att_est.theta) <= pi / 4.0 && abs(att_est.p) <= 4.0 * pi &&
            abs(att_est.q) <= 4.0 * pi && abs(att_est.r) <= 4.0 * pi)
     {
@@ -80,40 +74,10 @@ int main()
 
             // Actuate motors
             mixer.actuate(ver_cont.f_t / (cos(att_est.phi) * cos(att_est.theta)), att_cont.tau_phi, att_cont.tau_theta, att_cont.tau_psi);
-
-            // Manage trajectory states
-            switch (state)
-            {
-                case TAKEOFF:
-                    z_r = 2.0;  // Target altitude for takeoff (increased to 2 meters)
-                    if (ver_est.z >= 1.95)  // Close to target altitude
-                    {
-                        state = HOVER;
-                        timer.reset();
-                    }
-                    break;
-
-                case HOVER:
-                    z_r = 2.0;  // Maintain hover altitude
-                    if (timer.read() >= 10.0)  // Hover for 10 seconds (increased time)
-                    {
-                        state = LAND;
-                    }
-                    break;
-
-                case LAND:
-                    z_r = 0.0;  // Target altitude for landing
-                    if (ver_est.z <= 0.05)  // Close to ground
-                    {
-                        mixer.disarm();
-                        while (true);  // End program
-                    }
-                    break;
-            }
         }
     }
 
-    // Disarm motors and end program in case of instability
+    // Disarm motors and end program
     mixer.disarm();
     while (true);
 }
